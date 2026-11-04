@@ -1,0 +1,21 @@
+[package]
+name = "irust-net"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Async IRC connection handling (TLS, line codec) for irust"
+
+[dependencies]
+anyhow = "1.0.104"
+bytes = "1.12.1"
+encoding_rs = "0.8.35"
+futures-util = "0.3.34"
+irust-config = { path = "../irust-config" }
+rustls-native-certs = "0.8.4"
+rustls-pemfile = "2.2.0"
+sha2 = "0.10.9"
+tokio = { version = "1.53.1", features = ["net", "rt-multi-thread", "macros", "io-util", "time", "sync"] }
+socket2 = { version = "0.6", features = ["all"] }
+tokio-rustls = "0.26.4"
+tokio-util = { version = "0.7.19", features = ["codec"] }

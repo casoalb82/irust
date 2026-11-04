@@ -1,0 +1,16 @@
+[package]
+name = "irust-config"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Config file storage, themes, and settings for irust"
+
+[dependencies]
+anyhow = "1.0.104"
+chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
+directories = "6.0.0"
+encoding_rs = "0.8.35"
+serde = { version = "1.0.229", features = ["derive"] }
+toml = "1.1.4"
+whoami = "1.5.2"

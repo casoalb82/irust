@@ -1,0 +1,16 @@
+[package]
+name = "irust-tui"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Terminal rendering and input handling for irust"
+
+[dependencies]
+anyhow = "1.0.104"
+crossterm = { version = "0.29.0", features = ["event-stream", "bracketed-paste"] }
+futures-util = "0.3.34"
+ratatui = { version = "0.30.2", features = ["unstable-rendered-line-info"] }
+irust-core = { path = "../irust-core" }
+irust-config = { path = "../irust-config" }
+tokio = { version = "1.53.1", features = ["sync", "signal", "macros", "time"] }

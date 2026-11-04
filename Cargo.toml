@@ -1,0 +1,43 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+version = "1.4.5"
+edition = "2021"
+authors = ["abcX"]
+license = "MIT OR Apache-2.0"
+
+[package]
+name = "irust"
+version = "1.4.5"
+edition = "2021"
+authors = ["abcX"]
+license.workspace = true
+description = "A terminal IRC client for ChatNet"
+repository = "https://github.com/casoalb82/irust"
+
+[[bin]]
+name = "irust"
+path = "src/main.rs"
+
+[profile.release]
+codegen-units = 256
+strip = true
+
+[dependencies]
+irust-proto = { path = "crates/irust-proto" }
+irust-caps = { path = "crates/irust-caps" }
+irust-net = { path = "crates/irust-net" }
+irust-core = { path = "crates/irust-core" }
+irust-config = { path = "crates/irust-config" }
+irust-plugin = { path = "crates/irust-plugin" }
+irust-tui = { path = "crates/irust-tui" }
+tokio = { version = "1.53.1", features = ["rt-multi-thread", "macros", "time", "sync", "process", "fs"] }
+anyhow = "1.0.104"
+chrono = { version = "0.4.45", default-features = false, features = ["clock"] }
+directories = "6.0.0"
+reqwest = { version = "0.13.4", default-features = false, features = ["json", "rustls"] }
+serde_json = "1.0.151"
+sha2 = "0.10.9"
+getrandom = "0.3"

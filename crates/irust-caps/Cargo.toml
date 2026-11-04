@@ -1,0 +1,15 @@
+[package]
+name = "irust-caps"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "IRCv3 capability negotiation and SASL mechanisms for irust"
+
+[dependencies]
+base64 = "0.23.1"
+getrandom = "0.3"
+hmac = "0.12"
+irust-proto = { path = "../irust-proto" }
+pbkdf2 = "0.12"
+sha2 = "0.10.9"

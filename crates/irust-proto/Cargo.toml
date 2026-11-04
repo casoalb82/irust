@@ -1,0 +1,9 @@
+[package]
+name = "irust-proto"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "IRC line parsing and formatting for irust"
+
+[dependencies]
