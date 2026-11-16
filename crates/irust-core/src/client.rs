@@ -247,6 +247,7 @@ pub fn handle_message_with_highlight(
             let joins: Vec<(String, Option<String>)> = state
                 .channels
                 .values()
+                .filter(|c| !c.left_by_user)
                 .map(|c| (c.display_name.clone(), c.key.clone()))
                 .collect();
             for (name, key) in joins {
@@ -304,6 +305,7 @@ pub fn handle_message_with_highlight(
                         // stale entries
                         chan.nicklist.clear();
                         chan.joined = true;
+                        chan.left_by_user = false;
                         chan.buffer.push_system_join(irust_config::theme_formats::join_self(
                             &prefix.name,
                             &host_suffix(prefix),
@@ -372,6 +374,7 @@ pub fn handle_message_with_highlight(
                         crate::nick_completion::last_msg_remove(&mut chan.last_msgs, &prefix.name);
                         if is_us {
                             chan.joined = false;
+                            chan.left_by_user = true;
                             let reason = msg.params.get(1).cloned().unwrap_or_default();
                             chan.buffer.push_system_leave(irust_config::theme_formats::part_self(
                                 &prefix.name,
@@ -5628,5 +5631,29 @@ mod tests {
         assert!(!is_replayed_message(&fresh));
         let untagged = parse(":a!b@c PRIVMSG #x :hi").unwrap();
         assert!(!is_replayed_message(&untagged));
+    }
+
+    /// A channel we `/part`ed on purpose must NOT come back at the next
+    /// reconnect (found live: #ChatWorld/#K9 returned every day).
+    #[test]
+    fn welcome_does_not_rejoin_a_channel_we_parted() {
+        let _net = net_guard();
+        let mut st = state();
+        st.ensure_channel("#keep");
+        st.ensure_channel("#gone");
+        handle_message(&mut st, &parse(":abcX!u@h JOIN #keep").unwrap());
+        handle_message(&mut st, &parse(":abcX!u@h JOIN #gone").unwrap());
+        handle_message(&mut st, &parse(":abcX!u@h PART #gone :bye").unwrap());
+        // connection drops: every channel goes joined=false
+        for c in st.channels.values_mut() {
+            c.joined = false;
+        }
+        let out = handle_message(&mut st, &parse(":irc.example.com 001 abcX :Welcome").unwrap());
+        assert!(out.contains(&"JOIN #keep".to_string()), "{out:?}");
+        assert!(!out.iter().any(|l| l.contains("#gone")), "{out:?}");
+        // a later manual rejoin makes it eligible again
+        handle_message(&mut st, &parse(":abcX!u@h JOIN #gone").unwrap());
+        let out = handle_message(&mut st, &parse(":irc.example.com 001 abcX :Welcome").unwrap());
+        assert!(out.contains(&"JOIN #gone".to_string()), "{out:?}");
     }
 }
