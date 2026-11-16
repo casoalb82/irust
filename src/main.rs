@@ -1429,7 +1429,14 @@ async fn commit_job(
             match &echo_buffer {
                 BufferId::Status | BufferId::Empty(_) => {}
                 BufferId::Channel(key) => {
-                    let ensured_key = st.ensure_channel(&target);
+                    // `/k9 ...` / `/cw ...` typed in a channel: `target` is the service nick, the echo belongs to the
+                    // channel we are looking at. Only a send TO a channel may (re)create that channel's entry; creating
+                    // one named after the service made a fake "k9" window appear on every such command.
+                    let ensured_key = if target.eq_ignore_ascii_case(key) {
+                        st.ensure_channel(&target)
+                    } else {
+                        key.clone()
+                    };
                     if &ensured_key != key {
                         irust_config::debug_log::line(
                             "BUG",
