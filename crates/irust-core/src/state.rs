@@ -72,6 +72,13 @@ pub struct ChannelState {
     /// Nicks that recently spoke or joined, newest first -- irssi's
     /// per-channel `lastmsgs`, the ordering source for nick tab-completion.
     pub last_msgs: Vec<crate::nick_completion::LastMsg>,
+    /// Set when WE left the channel (own `PART`), cleared by the next own
+    /// `JOIN`. The reconnect auto-join (`001`) skips such a channel, like
+    /// irssi, which forgets a channel once it is `/part`ed. Without it, a
+    /// channel left on purpose (window left open) came back at every
+    /// reconnect, because a dropped connection also sets `joined = false`
+    /// on every channel and the two cases were indistinguishable.
+    pub left_by_user: bool,
 }
 
 impl ChannelState {
@@ -87,6 +94,7 @@ impl ChannelState {
             join_started_at: None,
             modestring: String::new(),
             last_msgs: Vec::new(),
+            left_by_user: false,
         }
     }
 }

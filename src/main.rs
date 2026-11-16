@@ -5095,6 +5095,7 @@ async fn main() -> anyhow::Result<()> {
                                 .map(|st| {
                                     st.channels
                                         .values()
+                                        .filter(|c| !c.left_by_user)
                                         .map(|c| (c.display_name.clone(), c.key.clone()))
                                         .collect()
                                 })
