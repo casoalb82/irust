@@ -19,4 +19,14 @@ mod tests {
         let presets = builtin_presets();
         assert!(presets.iter().any(|p| p.id == "chatnet"));
     }
+
+    #[test]
+    fn chatnet_preset_is_ready_to_connect() {
+        let p = chatnet::preset();
+        assert_eq!(p.servers.len(), 1);
+        assert_eq!(p.servers[0].host, "irc.chatnet.gg");
+        assert_eq!(p.servers[0].port, Some(6697));
+        assert!(p.tls);
+        assert_eq!(p.autojoin, vec!["#ChatNet".to_string()]);
+    }
 }
