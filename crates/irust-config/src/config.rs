@@ -144,11 +144,11 @@ mod tests {
     use crate::presets;
 
     #[test]
-    fn no_override_leaves_the_preset_unfilled() {
+    fn no_override_uses_the_presets_own_server() {
         let preset = presets::chatnet::preset();
         let config = AppConfig::default();
         let resolved = resolve_network(&preset, &config);
-        assert_eq!(resolved.host, None);
+        assert_eq!(resolved.host.as_deref(), Some("irc.chatnet.gg"));
         assert_eq!(resolved.port, preset.default_port);
     }
 
@@ -207,7 +207,7 @@ mod tests {
             },
         );
         let resolved = resolve_network(&preset, &config);
-        assert_eq!(resolved.host, None);
+        assert_eq!(resolved.host.as_deref(), Some("irc.chatnet.gg"), "another network's override must not leak in");
     }
 
     #[test]
